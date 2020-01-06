@@ -4,6 +4,8 @@ import scala.{specialized => sp}
 import spire.algebra._
 import spire.implicits._
 
+import scala.reflect.ClassTag
+
 @inline final case class Vec2[@sp(Float, Double) T](x: T, y: T) {
   @inline def width: T = x
   @inline def height: T = y
@@ -29,7 +31,7 @@ import spire.implicits._
   @inline def angle(implicit t: Trig[T]): T = t.atan2(y, x)
 
   @inline def toTuple: (T, T) = (x, y)
-  @inline def toArray: Array[T] = {
+  @inline def toArray(implicit m: ClassTag[T]): Array[T] = {
     val a = new Array[T](2)
     a(0) = x
     a(1) = y
@@ -48,8 +50,8 @@ object Vec2 {
   @inline def unitY[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.zero, r.one)
   @inline def unit[@sp(Float, Double) T](angle: T)(implicit t: Trig[T]): Vec2[T] = Vec2(t.cos(angle), t.sin(angle))
 
-  @inline def dot[@sp(Float, Double) T: CRing](x1: T, y1: T, x2: T, y2: T) = x1 * x2 + y1 * y2
-  @inline def lengthSq[@sp(Float, Double) T: CRing](x: T, y: T) = x * x + y * y
-  @inline def length[@sp(Float, Double) T: CRing: NRoot](x: T, y: T) = lengthSq(x, y).sqrt
-  @inline def normalize[@sp(Float, Double) T: Field](length: T, component: T) = component / length
+  @inline def dot[@sp(Float, Double) T: CRing](x1: T, y1: T, x2: T, y2: T): T = x1 * x2 + y1 * y2
+  @inline def lengthSq[@sp(Float, Double) T: CRing](x: T, y: T): T = x * x + y * y
+  @inline def length[@sp(Float, Double) T: CRing: NRoot](x: T, y: T): T = lengthSq(x, y).sqrt
+  @inline def normalize[@sp(Float, Double) T: Field](length: T, component: T): T = component / length
 }
