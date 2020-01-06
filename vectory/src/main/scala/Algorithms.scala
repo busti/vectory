@@ -4,13 +4,16 @@ import annotation.meta.field
 
 import flatland._
 
+import spire.algebra._
+import spire.implicits._
+
 //TODO: use Fast Inverse Square Root where possible
 // for example Vec2.normalized
 // https://en.wikipedia.org/wiki/Fast_inverse_square_root
 
 
 object Algorithms {
-  def polygonCornersToEdges(corners: IndexedSeq[Vec2]): IndexedSeq[Line] = {
+  def polygonCornersToEdges(corners: IndexedSeq[Vec2d]): IndexedSeq[Line] = {
     val n = corners.size
     val edges = new Array[Line](n)
     var i = 0
@@ -31,6 +34,8 @@ object Algorithms {
   }
 
   def distancePointLineSegment(x0: Double, y0: Double, x1: Double, y1: Double, x2: Double, y2: Double): Double = {
+    implicit val $r: CRing[Double] = implicitly[CRing[Double]]
+
     import Math.{ min, max }
     // https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
     // Return minimum distance between line segment vw and point p
@@ -48,7 +53,7 @@ object Algorithms {
     return Line(p, projection).length
   }
 
-  def projectPointOnLine(x0: Double, y0: Double, x1: Double, y1: Double, x2: Double, y2: Double): Vec2 = {
+  def projectPointOnLine(x0: Double, y0: Double, x1: Double, y1: Double, x2: Double, y2: Double): Vec2d = {
     val m = (y2 - y1) / (x2 - x1)
     val b = y1 - m * x1
     val x = (m * y0 + x0 - m * b) / (m * m + 1)
@@ -56,7 +61,7 @@ object Algorithms {
     Vec2(x, y)
   }
 
-  def axisAlignedBoundingBox(vertices: IndexedSeq[Vec2]) = {
+  def axisAlignedBoundingBox(vertices: IndexedSeq[Vec2d]) = {
     val first = vertices(0)
     var xMin = first.x
     var xMax = xMin
@@ -77,7 +82,7 @@ object Algorithms {
     AARect(Vec2(xMin, yMin), Vec2(xMax, yMax))
   }
 
-  final case class LineIntersection(pos: Vec2, onLine1: Boolean, onLine2: Boolean)
+  final case class LineIntersection(pos: Vec2d, onLine1: Boolean, onLine2: Boolean)
   def intersect(line1: Line, line2: Line): Option[LineIntersection] = {
     // if the lines intersect, the result contains the x and y of the intersection
     // (treating the lines as infinite) and booleans for
@@ -118,7 +123,9 @@ object Algorithms {
     return Some(LineIntersection(Vec2(resultX, resultY), resultOnLine1, resultOnLine2))
   }
 
-  def intersectCircleLine(circle: Circle, line: Line): Array[Vec2] = {
+  def intersectCircleLine(circle: Circle, line: Line): Array[Vec2d] = {
+    implicit val $f: Field[Double] = implicitly[Field[Double]]
+
     // https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm/1084899#1084899
     // The intersection points are ordered by the distance from line.start
     val d = line.vector
@@ -129,7 +136,7 @@ object Algorithms {
     val c = (f dot f) - circle.r * circle.r
 
     val discriminantSq = b * b - 4 * a * c
-    if (discriminantSq < 0) Array.empty[Vec2]
+    if (discriminantSq < 0) Array.empty[Vec2d]
     else {
       val discriminant = Math.sqrt(discriminantSq)
       if (discriminant == 0) {
@@ -168,7 +175,7 @@ object Algorithms {
     Some(Line(Vec2(x3, y3), Vec2(x4, y4)))
   }
 
-  def intersect(poly: ConvexPolygonLike, line: Line): Either[Boolean, Seq[Vec2]] = {
+  def intersect(poly: ConvexPolygonLike, line: Line): Either[Boolean, Seq[Vec2d]] = {
     // Left(true)  => line is completely inside
     // Left(false) => line is completely outside
     // Right(pos)  => one intersection point
@@ -211,15 +218,15 @@ object Algorithms {
     p.edges.exists(segment => distancePointLineSegment(c.x, c.y, segment.x1, segment.y1, segment.x2, segment.y2) <= c.r)
   }
 
-  def intersectCircleConvexPolygonMtd(p: ConvexPolygonLike, c: Circle, flip: Boolean): Option[Vec2] = {
+  def intersectCircleConvexPolygonMtd(p: ConvexPolygonLike, c: Circle, flip: Boolean): Option[Vec2d] = {
     // https://github.com/snowkit/differ/blob/master/differ/sat/SAT2D.hx
 
-    @inline def findNormalAxisX(verts: IndexedSeq[Vec2], index: Int): Double = {
+    @inline def findNormalAxisX(verts: IndexedSeq[Vec2d], index: Int): Double = {
       var v2 = if (index >= verts.length - 1) verts(0) else verts(index + 1)
       return -(v2.y - verts(index).y)
     }
 
-    @inline def findNormalAxisY(verts: IndexedSeq[Vec2], index: Int): Double = {
+    @inline def findNormalAxisY(verts: IndexedSeq[Vec2d], index: Int): Double = {
       var v2 = if (index >= verts.length - 1) verts(0) else verts(index + 1)
       return (v2.x - verts(index).x)
     }
@@ -356,11 +363,11 @@ object Algorithms {
   }
 
   // returns shortest vector to separate polygons
-  def intersect2ConvexPolygonMtd(a: ConvexPolygonLike, b: ConvexPolygonLike): Option[Vec2] = {
+  def intersect2ConvexPolygonMtd(a: ConvexPolygonLike, b: ConvexPolygonLike): Option[Vec2d] = {
     // https://stackoverflow.com/questions/753140/how-do-i-determine-if-two-convex-polygons-intersect
     // http://gamemath.com/2011/09/detecting-whether-two-convex-polygons-overlap
     // http://elancev.name/oliver/2D%20polygon.htm#tut2
-    def projectionExtents(axis: Vec2, vertices: IndexedSeq[Vec2]): (Double, Double) = {
+    def projectionExtents(axis: Vec2d, vertices: IndexedSeq[Vec2d]): (Double, Double) = {
       var aMin = axis dot vertices(0)
       var aMax = aMin
       var i = 1
@@ -374,7 +381,7 @@ object Algorithms {
       (aMin, aMax)
     }
 
-    var shortestAxis: Vec2 = null
+    var shortestAxis: Vec2d = null
     var shortestAxisLengthSq: Double = Double.MaxValue
 
     def separatingAxis(edge: Line, a: ConvexPolygonLike, b: ConvexPolygonLike): Boolean = {
@@ -448,6 +455,6 @@ object Algorithms {
 
   }
 
-  def convexHull(points: Iterable[Vec2]) = ConvexHull2D(points)
+  def convexHull(points: Iterable[Vec2d]) = ConvexHull2D(points)
 }
 

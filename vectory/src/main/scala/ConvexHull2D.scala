@@ -9,10 +9,10 @@ package vectory
 //     Return: the number of points in H[]
 
 object ConvexHull2D {
-  def apply(in: Iterable[Vec2]): Seq[Vec2] = {
+  def apply(in: Iterable[Vec2d]): Seq[Vec2d] = {
     if(in.isEmpty) return Nil
 
-    val verts: IndexedSeq[Vec2] = in.toIndexedSeq sortWith compare
+    val verts: IndexedSeq[Vec2d] = in.toIndexedSeq sortWith compare
     val n = verts.size
 
     val minmin = 0
@@ -28,7 +28,7 @@ object ConvexHull2D {
       maxmin -= 1
     }
 
-    var stack: List[Vec2] = Nil
+    var stack: List[Vec2d] = Nil
 
     if (minmax == n - 1) { // degenerate case: all x-coords == xmin
       stack ::= verts(minmin)
@@ -73,8 +73,8 @@ object ConvexHull2D {
     }
   }
 
-  @inline def isLeft(p0: Vec2, p1: Vec2, p2: Vec2) = (p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y)
+  @inline def isLeft(p0: Vec2d, p1: Vec2d, p2: Vec2d) = (p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y)
 
-  val compare = (v1: Vec2, v2: Vec2) => if (v1.x == v2.x) (v1.y < v2.y) else (v1.x < v2.x)
+  val compare = (v1: Vec2d, v2: Vec2d) => if (v1.x == v2.x) (v1.y < v2.y) else (v1.x < v2.x)
 
 }

@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class ConvexPolygonSpec extends AnyFreeSpec with Matchers {
   "point inside" in {
     val p = ConvexPolygon(Vec2Array(Vec2(-3, 1), Vec2(-1, -4), Vec2(3, -5), Vec2(5, -1), Vec2(2, 2)))

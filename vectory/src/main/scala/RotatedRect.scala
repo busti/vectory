@@ -1,10 +1,14 @@
 package vectory
 
 import annotation.meta.field
-
 import flatland._
 
-final case class RotatedRect(center: Vec2, size: Vec2, angle: Double) extends ConvexPolygonLike {
+import spire.algebra._
+import spire.implicits._
+
+final case class RotatedRect(center: Vec2d, size: Vec2d, angle: Double) extends ConvexPolygonLike {
+  implicit val $r: CRing[Double] = implicitly[CRing[Double]]
+
   import Math.{ sin, cos }
 
   @inline def width = size.x

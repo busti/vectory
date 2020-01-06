@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class RotatedRectSpec extends AnyFreeSpec with Matchers {
   "constructor" in {
     val r = RotatedRect(Vec2(11, 5), Vec2(8, 4), Math.PI / 4)
@@ -49,10 +52,10 @@ class RotatedRectSpec extends AnyFreeSpec with Matchers {
   }
   "PointInside" in {
     val r = RotatedRect(Vec2(8, 9.5), Vec2(20, 5), Math.atan(4.0 / 3.0))
-    (r includes Vec2(4, 4)) mustEqual true
-    (r includes Vec2(8, 12)) mustEqual true
-    (r includes Vec2(12, 8)) mustEqual false
-    (r includes Vec2(12, 10)) mustEqual false
+    (r includes Vec2(4d, 4d)) mustEqual true
+    (r includes Vec2(8d, 12d)) mustEqual true
+    (r includes Vec2(12d, 8d)) mustEqual false
+    (r includes Vec2(12d, 10d)) mustEqual false
   }
 
   "LineInside" in {

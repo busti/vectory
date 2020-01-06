@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class Vec2Spec extends AnyFreeSpec with Matchers {
   "constructor" in {
     val v = Vec2(5, 7)
@@ -22,11 +25,11 @@ class Vec2Spec extends AnyFreeSpec with Matchers {
     v.x mustEqual 5
     v.y mustEqual 7
   }
-  "factory from structural type: width, height" in {
-    val v = Vec2.dim(new { val width = 5.0; val height = 7.0 })
-    v.x mustEqual 5
-    v.y mustEqual 7
-  }
+//  "factory from structural type: width, height" in {
+//    val v = Vec2.dim(new { val width = 5.0; val height = 7.0 })
+//    v.x mustEqual 5
+//    v.y mustEqual 7
+//  }
   "from tuple" in {
     val v = Vec2((5.0, 7.0))
     v.x mustEqual 5
@@ -71,7 +74,7 @@ class Vec2Spec extends AnyFreeSpec with Matchers {
     c.y mustEqual 21
   }
   "division" in {
-    val a = Vec2(6, 8)
+    val a = Vec2(6d, 8d)
     val c = a / 2
     c.x mustEqual 3
     c.y mustEqual 4
@@ -104,8 +107,8 @@ class Vec2Spec extends AnyFreeSpec with Matchers {
     Vec2(3, 4).length mustEqual 5
   }
   "normalized" in {
-    Vec2(3, 4).normalized.length mustEqual 1
-    Vec2(-2, 3).normalized.length mustEqual 1
+    Vec2(3d, 4d).normalized.length mustEqual 1
+    Vec2(-2d, 3d).normalized.length mustEqual 1
   }
   "area" in {
     Vec2(3, 4).area mustEqual 12

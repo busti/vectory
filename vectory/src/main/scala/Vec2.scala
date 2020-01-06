@@ -6,6 +6,8 @@ import spire.implicits._
 
 import scala.reflect.ClassTag
 
+import scala.language.reflectiveCalls
+
 @inline final case class Vec2[@sp(Float, Double) T](x: T, y: T) {
   @inline def width: T = x
   @inline def height: T = y
@@ -42,8 +44,10 @@ import scala.reflect.ClassTag
 object Vec2 {
   @inline def apply[@sp(Float, Double) T](tuple: (T, T)): Vec2[T] = new Vec2(tuple._1, tuple._2)
   @inline def apply[@sp(Float, Double) T](x: T): Vec2[T] = new Vec2(x, x)
-  @inline def apply[@sp(Float, Double) T](v: { def x: T; def y: T }): Vec2[T] = new Vec2(v.x, v.y)
-  @inline def dim[@sp(Float, Double) T](v: { def width: T; def height: T }): Vec2[T] = new Vec2(v.width, v.height)
+  // @inline def apply(v: { def x: Float; def y: Float }): Vec2[Float] = new Vec2(v.x, v.y)
+  // @inline def apply(v: { def x: Double; def y: Double }): Vec2[Double] = new Vec2(v.x, v.y)
+  // @inline def dim(v: { def width:Float; def height: Float }): Vec2[Float] = new Vec2(v.width, v.height)
+  // @inline def dim(v: { def width: Double; def height: Double }): Vec2[Double] = new Vec2(v.width, v.height)
 
   @inline def zero[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.zero, r.zero)
   @inline def unitX[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.one, r.zero)

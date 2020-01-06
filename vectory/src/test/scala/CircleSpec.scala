@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class CircleSpec extends AnyFreeSpec with Matchers {
   "constructor" in {
     val c = Circle(Vec2(2, 3), 5)

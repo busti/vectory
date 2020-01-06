@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class LineSpec extends AnyFreeSpec with Matchers {
   "constructor" in {
     val l = Line(Vec2(7, 3), Vec2(8, 4))
@@ -38,7 +41,7 @@ class LineSpec extends AnyFreeSpec with Matchers {
 
   "rightOf" in {
     val l = Line(Vec2(4, 12), Vec2(8, 0))
-    val p = Vec2(12, 16)
+    val p = Vec2(12d, 16d)
     (l rightOf p) mustEqual false
     (l leftOf p) mustEqual true
   }
@@ -51,24 +54,24 @@ class LineSpec extends AnyFreeSpec with Matchers {
   "distance to point" - {
     "distance to point (point on line)" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 5)
+      val p = Vec2(7d, 5d)
       l.distance(p) mustEqual 0
     }
 
     "distance to point 1" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 3)
+      val p = Vec2(7d, 3d)
       l.distance(p) mustEqual 2
     }
 
     "distance to point 2" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 8)
+      val p = Vec2(7d, 8d)
       l.distance(p) mustEqual 3
     }
     "distance to point 3" in {
       val l = Line(Vec2(-1, -1), Vec2(1, 3))
-      val p = Vec2(4, -1)
+      val p = Vec2(4d, -1d)
       l.distance(p) mustEqual Math.sqrt(20)
     }
   }
@@ -76,66 +79,66 @@ class LineSpec extends AnyFreeSpec with Matchers {
   "segment distance to point" - {
     "point on segment" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 5)
+      val p = Vec2(7d, 5d)
       l.segmentDistance(p) mustEqual 0
     }
 
     "point on line" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(3, 5)
+      val p = Vec2(3d, 5d)
       l.segmentDistance(p) mustEqual 2
     }
 
     "segment start to point" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(3, 3)
+      val p = Vec2(3d, 3d)
       l.segmentDistance(p) mustEqual Math.sqrt(8)
     }
 
     "segment end to point" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(11, 3)
+      val p = Vec2(11d, 3d)
       l.segmentDistance(p) mustEqual Math.sqrt(8)
     }
 
     "segment distance to point 1" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 3)
+      val p = Vec2(7d, 3d)
       l.segmentDistance(p) mustEqual 2
     }
 
     "segment distance to point 2" in {
       val l = Line(Vec2(5, 5), Vec2(9, 5))
-      val p = Vec2(7, 8)
+      val p = Vec2(7d, 8d)
       l.segmentDistance(p) mustEqual 3
     }
     "segment distance to point 3" in {
       val l = Line(Vec2(-1, -1), Vec2(1, 3))
-      val p = Vec2(4, -1)
+      val p = Vec2(4d, -1d)
       l.segmentDistance(p) mustEqual Math.sqrt(20)
     }
   }
 
   "project point on line (already on line)" in {
     val l = Line(Vec2(5, 5), Vec2(9, 5))
-    val p = Vec2(7, 5)
+    val p = Vec2(7d, 5d)
     l.pointProjection(p) mustEqual Vec2(7, 5)
   }
 
   "project point on line 1" in {
     val l = Line(Vec2(5, 5), Vec2(9, 5))
-    val p = Vec2(7, 3)
+    val p = Vec2(7d, 3d)
     l.pointProjection(p) mustEqual Vec2(7, 5)
   }
 
   "project point on line 2" in {
     val l = Line(Vec2(5, 5), Vec2(9, 5))
-    val p = Vec2(7, 8)
+    val p = Vec2(7d, 8d)
     l.pointProjection(p) mustEqual Vec2(7, 5)
   }
   "project point on line 3" in {
     val l = Line(Vec2(-1, -1), Vec2(1, 3))
-    val p = Vec2(4, -1)
+    val p = Vec2(4d, -1d)
     l.pointProjection(p) mustEqual Vec2(0, 1)
   }
 }

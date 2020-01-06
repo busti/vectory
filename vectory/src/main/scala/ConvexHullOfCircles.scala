@@ -1,5 +1,8 @@
 package vectory
 
+import spire.algebra._
+import spire.implicits._
+
 import collection.mutable
 
 object ConvexHullOfCircles {
@@ -20,7 +23,7 @@ object ConvexHullOfCirclesSampling {
 
   def apply(circles: Seq[Circle]): Seq[Circle] = {
     val samples = 10
-    val pointToCircle:Map[Vec2,Circle] = circles.flatMap { c => c.sampleCircumference(samples).map(_ -> c) }.toMap
+    val pointToCircle:Map[Vec2d,Circle] = circles.flatMap { c => c.sampleCircumference(samples).map(_ -> c) }.toMap
     val hull = compress(ConvexHull2D(pointToCircle.keys).map(pointToCircle))
     // if (hull.size > 1) (hull :+ hull.head).sliding(2).foreach{ case Seq(c1, c2) => assert(!c1.includes(c2), s"$c1 includes $c2"); assert(!c2.includes(c1), s"$c2 includes $c1") }
     hull.reverse
@@ -114,24 +117,26 @@ object ConvexHullOfCirclesSampling {
 // by Olivier Devilles and Mordecai Golin
 
 object ConvexHullOfCircles2 {
+  implicit val $r: CRing[Double] = implicitly[CRing[Double]]
+
   case class Arc(circle: Circle, start: Double = 0, end: Double = 2 * Math.PI) {
     val startPos = circle.center + (Vec2.unit(start) * circle.r)
     val endPos = circle.center + (Vec2.unit(end) * circle.r)
   }
 
-  case class ArcLeaf(arc: Arc, q: Vec2) {
+  case class ArcLeaf(arc: Arc, q: Vec2d) {
     val startAngle = Line(q, arc.startPos).vector.angle
     val endAngle = Line(q, arc.endPos).vector.angle
   }
 
-  class Arcs(val q: Vec2, var arcs: mutable.ArrayBuffer[ArcLeaf] = mutable.ArrayBuffer.empty[ArcLeaf]) {
+  class Arcs(val q: Vec2d, var arcs: mutable.ArrayBuffer[ArcLeaf] = mutable.ArrayBuffer.empty[ArcLeaf]) {
     def isEmpty = arcs.isEmpty
     // arcs are stored in clockwise order
     def +=(arc: Arc): Unit = {
       arcs += ArcLeaf(arc, q)
     }
 
-    def cutOut(p: Vec2, circle: Circle) = {
+    def cutOut(p: Vec2d, circle: Circle) = {
 
     }
 
@@ -145,11 +150,11 @@ object ConvexHullOfCircles2 {
       arcs.filter(_.startAngle > angle).minBy(_.startAngle)
     }
 
-    def calculate_p(p_prime: Vec2): Option[Vec2] = {
+    def calculate_p(p_prime: Vec2d): Option[Vec2d] = {
       val ray = Line(q, p_prime)
       val angle = ray.vector.angle
       val arcOpt = arcs.find(arcLeaf => arcLeaf.startAngle <= angle && angle < arcLeaf.endAngle) // endAngle is exclusive //TODO: wrap around, modulo
-      val p: Vec2 = arcOpt match {
+      val p: Vec2d = arcOpt match {
         case Some(arcLeaf) => (ray intersect arcLeaf.arc.circle).last
         case None =>
           // point does not lie on arc, but on line
@@ -169,7 +174,7 @@ object ConvexHullOfCircles2 {
     }
   }
 
-  class CH(q: Vec2) {
+  class CH(q: Vec2d) {
     val arcs = new Arcs(q)
     def add(c: Circle): Unit = {
       if (arcs.isEmpty) {
@@ -177,7 +182,7 @@ object ConvexHullOfCircles2 {
       } else {
         // circle must be smaller than all other circles contained in this hull
         // TODO: must p_prime be on the circle area or hull?
-        val pOpt: Option[Vec2] = arcs.calculate_p(p_prime = c.center)
+        val pOpt: Option[Vec2d] = arcs.calculate_p(p_prime = c.center)
         pOpt match {
           case Some(p) => // new circle is outside
             // the current tangent or arc which contains p is A
@@ -195,7 +200,7 @@ object ConvexHullOfCircles2 {
 
   def hull(circles: Seq[Circle]): collection.Seq[Circle] = {
     val sortedCircles = circles.sortBy(c => -c.r) // sort by radius, biggest first
-    val q: Vec2 = sortedCircles.head.center
+    val q: Vec2d = sortedCircles.head.center
     val ch = new CH(q)
     sortedCircles.foreach(circle => ch.add(circle))
     ch.circles

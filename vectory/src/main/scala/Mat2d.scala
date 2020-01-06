@@ -39,7 +39,7 @@ import annotation.meta.field
       m10 * s, m11 * s, m12 * s
     )
 
-  @inline def * (v: Vec2): Vec2 =
+  @inline def * (v: Vec2d): Vec2d =
     Vec2(
       v.x * m00 + v.y * m01 + m02,
       v.x * m10 + v.y * m11 + m12
@@ -65,7 +65,7 @@ object Mat2d {
       0, y, 0
     )
 
-  @inline def scale2d(v: Vec2): Mat2d =
+  @inline def scale2d(v: Vec2d): Mat2d =
     scale2d(v.x, v.y)
 
   @inline def rotate2d(angle: Double): Mat2d = {

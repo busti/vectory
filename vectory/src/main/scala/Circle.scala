@@ -1,10 +1,14 @@
 package vectory
 
 import annotation.meta.field
-
 import flatland._
 
-final case class Circle(center: Vec2, r: Double) {
+import spire.algebra._
+import spire.implicits._
+
+final case class Circle(center: Vec2d, r: Double) {
+  implicit val $r: CRing[Double] = implicitly[CRing[Double]]
+
   @inline def x = center.x
   @inline def y = center.y
   @inline def d = r * 2
@@ -13,8 +17,8 @@ final case class Circle(center: Vec2, r: Double) {
 
   def intersects(rect: AARect) = Algorithms.intersect(this, rect)
   def intersects(that: ConvexPolygonLike) = Algorithms.intersectCircleConvexPolygon(that, this)
-  def intersectsMtd(that: ConvexPolygonLike): Option[Vec2] = Algorithms.intersectCircleConvexPolygonMtd(that, this, flip = true)
-  def intersect(that: Line): Array[Vec2] = Algorithms.intersectCircleLine(this, that)
+  def intersectsMtd(that: ConvexPolygonLike): Option[Vec2d] = Algorithms.intersectCircleConvexPolygonMtd(that, this, flip = true)
+  def intersect(that: Line): Array[Vec2d] = Algorithms.intersectCircleLine(this, that)
   def outerTangentCW(that: Circle) = Algorithms.circleOuterTangentCW(this, that)
   def outerTangentCCW(that: Circle) = Algorithms.circleOuterTangentCW(that, this).map(_.reversed)
 

@@ -1,11 +1,9 @@
 package vectory
 
-import annotation.meta.field
-
-import flatland._
+import spire.implicits._
 
 object AARect {
-  def fromCenter(center:Vec2, size:Vec2) = {
+  def fromCenter(center: Vec2d, size: Vec2d) = {
     val halfSize = size * 0.5
     val minCorner = center - halfSize
     val maxCorner = center + halfSize
@@ -13,10 +11,10 @@ object AARect {
   }
 }
 
-final case class AARect(minCorner: Vec2, maxCorner: Vec2) extends ConvexPolygonLike {
+final case class AARect(minCorner: Vec2d, maxCorner: Vec2d) extends ConvexPolygonLike {
   override def aabb = this
 
-  override def includes(v: Vec2): Boolean = v.x > minCorner.x && v.y > minCorner.y && v.x < maxCorner.x && v.y < maxCorner.y
+  override def includes(v: Vec2d): Boolean = v.x > minCorner.x && v.y > minCorner.y && v.x < maxCorner.x && v.y < maxCorner.y
 
   @inline def size = maxCorner - minCorner
   @inline def width = size.x

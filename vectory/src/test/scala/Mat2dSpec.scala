@@ -4,6 +4,9 @@ import org.scalatest._
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
+import spire.algebra._
+import spire.implicits._
+
 class Mat2dSpec extends AnyFreeSpec with Matchers {
   "constructor" in {
     val m = Mat2d(5, 7, 3,
@@ -43,7 +46,7 @@ class Mat2dSpec extends AnyFreeSpec with Matchers {
   "vector multiplication" in {
     val a = Mat2d(5, 6, 1,
       4, 2, 3)
-    val b = Vec2(7, 8)
+    val b = Vec2(7d, 8d)
     val c = a * b
     c mustEqual Vec2(84, 47)
   }
