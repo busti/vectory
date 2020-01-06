@@ -11,6 +11,7 @@ lazy val vectory = (crossProject.crossType(CrossType.Pure))
     libraryDependencies ++= (
       "org.scalatest" %%% "scalatest" % "3.1.0" % Test ::
       "com.github.fdietze.flatland" %%% "flatland" % "7868da7" ::
+      "org.typelevel" % "spire_2.11" % "0.17.0-M1" ::
       Nil
     ),
 
