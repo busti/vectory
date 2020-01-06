@@ -1,36 +1,36 @@
 package vectory
 
-import annotation.meta.field
+import scala.{specialized => sp}
+import spire.algebra._
+import spire.implicits._
 
-import flatland._
+@inline final case class Vec2[@sp(Float, Double) T](x: T, y: T) {
+  @inline def width: T = x
+  @inline def height: T = y
 
-@inline final case class Vec2(x: Double, y: Double) {
-  @inline def width = x
-  @inline def height = y
+  @inline def unary_-(implicit r: CRing[T]): Vec2[T] = Vec2(-x, -y)
+  @inline def abs(implicit s: Signed[T]): Vec2[T] = Vec2(x.abs, y.abs)
 
-  @inline def unary_- = Vec2(-x, -y)
-  @inline def abs = Vec2(Math.abs(x), Math.abs(y))
+  @inline def +(that: Vec2[T])(implicit r: CRing[T]): Vec2[T] = Vec2(this.x + that.x, this.y + that.y)
+  @inline def +(that: T)(implicit r: CRing[T]): Vec2[T] = Vec2(this.x + that, this.y + that)
+  @inline def -(that: Vec2[T])(implicit r: CRing[T]): Vec2[T] = Vec2(this.x - that.x, this.y - that.y)
+  @inline def -(that: T)(implicit r: CRing[T]): Vec2[T] = Vec2(this.x - that, this.y - that)
+  @inline def *(that: T)(implicit r: CRing[T]): Vec2[T] = Vec2(this.x * that, this.y * that)
+  @inline def /(that: T)(implicit f: Field[T]): Vec2[T] = Vec2(this.x / that, this.y / that)
+  @inline def dot(that: Vec2[T])(implicit r: CRing[T]): T = this.x * that.x + this.y * that.y
+  @inline def cross(that: Vec2[T])(implicit r: CRing[T]): T = this.x * that.y - this.y * that.x
 
-  @inline def +(that: Vec2) = Vec2(this.x + that.x, this.y + that.y)
-  @inline def +(that: Double) = Vec2(this.x + that, this.y + that)
-  @inline def -(that: Vec2) = Vec2(this.x - that.x, this.y - that.y)
-  @inline def -(that: Double) = Vec2(this.x - that, this.y - that)
-  @inline def *(a: Double) = Vec2(this.x * a, this.y * a)
-  @inline def /(a: Double) = Vec2(this.x / a, this.y / a)
-  @inline def dot(that: Vec2) = this.x * that.x + this.y * that.y
-  @inline def cross(that: Vec2) = this.x * that.y - this.y * that.x
+  @inline def lengthSq(implicit r: CRing[T]): T = x * x + y * y
+  @inline def length(implicit r: CRing[T], n: NRoot[T]): T = lengthSq.sqrt
+  @inline def normalized(implicit r: CRing[T], f: Field[T], n: NRoot[T]): Vec2[T] = this / length
+  @inline def area(implicit r: CRing[T]): T = x * y
+  @inline def normal(implicit r: CRing[T]): Vec2[T] = Vec2(y, -x)
 
-  @inline def lengthSq = x * x + y * y
-  @inline def length = Math.sqrt(lengthSq)
-  @inline def normalized = this / length
-  @inline def area = x * y
-  @inline def normal = Vec2(y, -x)
+  @inline def angle(implicit t: Trig[T]): T = t.atan2(y, x)
 
-  @inline def angle = Math.atan2(y, x)
-
-  @inline def toTuple = (x, y)
-  @inline def toArray: Array[Double] = {
-    val a = new Array[Double](2)
+  @inline def toTuple: (T, T) = (x, y)
+  @inline def toArray: Array[T] = {
+    val a = new Array[T](2)
     a(0) = x
     a(1) = y
     a
@@ -38,18 +38,18 @@ import flatland._
 }
 
 object Vec2 {
-  @inline def apply(tuple: (Double, Double)) = new Vec2(tuple._1, tuple._2)
-  @inline def apply(x: Double) = new Vec2(x, x)
-  @inline def apply(v: { def x: Double; def y: Double }) = new Vec2(v.x, v.y)
-  @inline def dim(v: { def width: Double; def height: Double }) = new Vec2(v.width, v.height)
+  @inline def apply[@sp(Float, Double) T](tuple: (T, T)): Vec2[T] = new Vec2(tuple._1, tuple._2)
+  @inline def apply[@sp(Float, Double) T](x: T): Vec2[T] = new Vec2(x, x)
+  @inline def apply[@sp(Float, Double) T](v: { def x: T; def y: T }): Vec2[T] = new Vec2(v.x, v.y)
+  @inline def dim[@sp(Float, Double) T](v: { def width: T; def height: T }): Vec2[T] = new Vec2(v.width, v.height)
 
-  @inline def zero = new Vec2(0, 0)
-  @inline def unitX = new Vec2(1, 0)
-  @inline def unitY = new Vec2(0, 1)
-  @inline def unit(angle: Double) = Vec2(Math.cos(angle), Math.sin(angle))
+  @inline def zero[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.zero, r.zero)
+  @inline def unitX[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.one, r.zero)
+  @inline def unitY[@sp(Float, Double) T](implicit r: Rig[T]): Vec2[T] = new Vec2(r.zero, r.one)
+  @inline def unit[@sp(Float, Double) T](angle: T)(implicit t: Trig[T]): Vec2[T] = Vec2(t.cos(angle), t.sin(angle))
 
-  @inline def dot(x1: Double, y1: Double, x2: Double, y2: Double) = x1 * x2 + y1 * y2
-  @inline def lengthSq(x: Double, y: Double) = x * x + y * y
-  @inline def length(x: Double, y: Double) = Math.sqrt(lengthSq(x, y))
-  @inline def normalize(length: Double, component: Double) = component / length
+  @inline def dot[@sp(Float, Double) T: CRing](x1: T, y1: T, x2: T, y2: T) = x1 * x2 + y1 * y2
+  @inline def lengthSq[@sp(Float, Double) T: CRing](x: T, y: T) = x * x + y * y
+  @inline def length[@sp(Float, Double) T: CRing: NRoot](x: T, y: T) = lengthSq(x, y).sqrt
+  @inline def normalize[@sp(Float, Double) T: Field](length: T, component: T) = component / length
 }
